@@ -87,7 +87,7 @@ public final class Translator {
         var opCode = scan();
 
         switch (opCode) {
-            case "add" -> {
+            case "add", "sub" -> {
                 r = scanInt();
                 s1 = scanInt();
                 s2 = scanInt();

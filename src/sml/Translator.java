@@ -1,9 +1,6 @@
 package sml;
 
-import sml.instructions.AddInstruction;
-import sml.instructions.DivInstruction;
-import sml.instructions.MulInstruction;
-import sml.instructions.SubInstruction;
+import sml.instructions.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -113,6 +110,10 @@ public final class Translator {
                 s1 = scanInt();
                 s2 = scanInt();
                 return new DivInstruction(label, r, s1, s2);
+            }
+            case "out" -> {
+                r = scanInt();
+                return new OutInstruction(label, r);
             }
             // TODO: You will have to write code here for the other instructions.
 

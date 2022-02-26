@@ -1,6 +1,7 @@
 package sml;
 
 import sml.instructions.AddInstruction;
+import sml.instructions.DivInstruction;
 import sml.instructions.MulInstruction;
 import sml.instructions.SubInstruction;
 
@@ -107,13 +108,19 @@ public final class Translator {
                 s2 = scanInt();
                 return new MulInstruction(label, r, s1, s2);
             }
+            case "div" -> {
+                r = scanInt();
+                s1 = scanInt();
+                s2 = scanInt();
+                return new DivInstruction(label, r, s1, s2);
+            }
             // TODO: You will have to write code here for the other instructions.
 
             default -> {
                 System.out.println("Unknown instruction: " + opCode);
             }
         }
-        return null; // FIX THIS
+        return null; // TODO FIX THIS
     }
 
     /*

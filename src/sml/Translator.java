@@ -1,7 +1,6 @@
 package sml;
 
 import sml.instructions.*;
-
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -76,62 +75,66 @@ public final class Translator {
     // The input line should consist of an SML instruction, with its label already removed.
     // Translate line into an instruction with label "label" and return the instruction
     public Instruction getInstruction(String label) {
-        int s1; // Possible operands of the instruction
-        int s2;
-        int r;
-        String lbl;
-
         if (line.equals("")) {
             return null;
         }
         var opCode = scan();
 
-        switch (opCode) {
-            case "add" -> {
-                r = scanInt();
-                s1 = scanInt();
-                s2 = scanInt();
-                return new AddInstruction(label, r, s1, s2);
-            }
-            case "sub" -> {
-                r = scanInt();
-                s1 = scanInt();
-                s2 = scanInt();
-                return new SubInstruction(label, r, s1, s2);
-            }
-            case "mul" -> {
-                r = scanInt();
-                s1 = scanInt();
-                s2 = scanInt();
-                return new MulInstruction(label, r, s1, s2);
-            }
-            case "div" -> {
-                r = scanInt();
-                s1 = scanInt();
-                s2 = scanInt();
-                return new DivInstruction(label, r, s1, s2);
-            }
-            case "out" -> {
-                r = scanInt();
-                return new OutInstruction(label, r);
-            }
-            case "lin" -> {
-                r = scanInt();
-                s1 = scanInt();
-                return new LinInstruction(label, r, s1);
-            }
-            case "bnz" -> {
-                r = scanInt();
-                lbl = scan();
-                return new BnzInstruction(label, r, lbl);
-            }
-            // TODO: You will have to write code here for the other instructions.
+        /*
+        Now take the switch statement that decides which type of instruction is created and modify the code so
+        that it uses reflection to create the instances, i.e., remove the explicit calls to the subclasses and
+        the switch statement. This will allow the SML language to be extended without having to modify the
+        original code.
+         */
 
-            default -> {
-                System.out.println("Unknown instruction: " + opCode);
+        // need to get the arguments from the line string, exploit behaviour of scanint when error occurs
+        // Downside is it prevents the application from using the Max int when that is the intention
+        ArrayList<Object> args = new ArrayList<>();
+        args.add(label);
+
+        while (!line.isEmpty()) {
+            String rollback = line;
+
+            int arg = scanInt();
+            if (arg == Integer.MAX_VALUE) {
+                line = rollback;
+                String s = scan();
+                args.add(s);
+            } else {
+                args.add(arg);
             }
         }
-        return null; // TODO FIX THIS
+        Object[] argsArr = args.toArray();
+
+        // now get the parameter types in order to obtain the constructor
+        Class[] types = new Class[args.size()];
+        for (int i = 0; i < args.size(); i++) {
+            if (args.get(i).getClass().equals(Integer.class)) types[i] = (Integer.TYPE);
+            else types[i] = args.get(i).getClass();
+        }
+
+        // build the method name
+        opCode = opCode.substring(0, 1).toUpperCase() + opCode.substring(1);
+        String methodName = "sml.instructions." + opCode + "Instruction";
+
+        Class<?> instrClass = null;
+        try {
+            instrClass = Class.forName(methodName);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        Constructor<?> instrConstr = null;
+        try {
+            instrConstr = instrClass.getDeclaredConstructor(types);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+        try {
+            return (Instruction) instrConstr.newInstance(argsArr);
+        } catch (InstantiationException | InvocationTargetException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /*

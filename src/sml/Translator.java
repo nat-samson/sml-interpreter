@@ -83,25 +83,23 @@ public final class Translator {
 
         // create an instance of the matching Instruction subclass
         String instrName = buildInstrName(opCode);
-        Class<?> instrClass = null;
+        Class<?> instrClass;
+        Constructor<?> instrConstr;
+
         try {
             instrClass = Class.forName(instrName);
-        } catch (ClassNotFoundException e) {
-            System.err.println("No instruction defined for: " + instrName);
-            e.printStackTrace();
-        }
-        Constructor<?> instrConstr = null;
-        try {
-            assert instrClass != null;
             instrConstr = instrClass.getDeclaredConstructor(getArgTypes(args));
-        } catch (NoSuchMethodException e) {
+            return (Instruction) instrConstr.newInstance(args.toArray());
+        }
+        catch (ClassNotFoundException e) {
+            System.err.println("No instruction defined for: " + instrName);
+        }
+        catch (NoSuchMethodException e) {
             System.err.println("Provided arguments do not match what is expected for: " + opCode +
                     "\nPlease review the line labelled: " + label);
         }
-        try {
-            assert instrConstr != null;
-            return (Instruction) instrConstr.newInstance(args.toArray());
-        } catch (InstantiationException | InvocationTargetException | IllegalAccessException e) {
+        catch (InstantiationException | InvocationTargetException | IllegalAccessException e) {
+            System.err.println("Unable to create an Instruction for the line labelled: " + label);
             e.printStackTrace();
         }
         return null;

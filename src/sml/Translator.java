@@ -2,9 +2,10 @@ package sml;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Scanner;
 
 /**
  * This class ....
@@ -74,6 +75,8 @@ public final class Translator {
     // The input line should consist of an SML instruction, with its label already removed.
     // Translate line into an instruction with label "label" and return the instruction
     public Instruction getInstruction(String label) {
+
+        // extract the Opcode and the arguments from the input line
         if (line.equals("")) {
             return null;
         }
@@ -81,28 +84,8 @@ public final class Translator {
 
         ArrayList<Object> args = lineToArgs(label);
 
-        // create an instance of the matching Instruction subclass
-        String instrName = buildInstrName(opCode);
-        Class<?> instrClass;
-        Constructor<?> instrConstr;
-
-        try {
-            instrClass = Class.forName(instrName);
-            instrConstr = instrClass.getDeclaredConstructor(getArgTypes(args));
-            return (Instruction) instrConstr.newInstance(args.toArray());
-        }
-        catch (ClassNotFoundException e) {
-            System.err.println("No instruction defined for: " + instrName);
-        }
-        catch (NoSuchMethodException e) {
-            System.err.println("Provided arguments do not match what is expected for: " + opCode +
-                    "\nPlease review the line labelled: " + label);
-        }
-        catch (InstantiationException | InvocationTargetException | IllegalAccessException e) {
-            System.err.println("Unable to create an Instruction for the line labelled: " + label);
-            e.printStackTrace();
-        }
-        return null;
+        InstructionFactory factory = InstructionFactory.getInstance();
+        return factory.getInstruction(opCode, args);
     }
 
     /**
@@ -127,32 +110,6 @@ public final class Translator {
             }
         }
         return args;
-    }
-
-    /**
-     * Create an array of Class objects based on the types of each element in the input list
-     *
-     * @param args a list of objects representing the arguments for the instruction being created
-     * @return an array of Class objects based on the types of the input list
-     */
-    private Class<?>[] getArgTypes(ArrayList<Object> args) {
-        Class<?>[] types = new Class[args.size()];
-        for (int i = 0; i < args.size(); i++) {
-            if (args.get(i).getClass().equals(Integer.class)) types[i] = (Integer.TYPE);
-            else types[i] = args.get(i).getClass();
-        }
-        return types;
-    }
-
-    /**
-     * Form the full name of the required Instruction subclass.
-     *
-     * @param opCode the 'raw' opCode taken from the input file for a given instruction
-     * @return a String of the name of the relevant Instruction subclass
-     */
-    private String buildInstrName(String opCode) {
-        opCode = opCode.substring(0, 1).toUpperCase() + opCode.substring(1);
-        return "sml.instructions." + opCode + "Instruction";
     }
 
     /*
@@ -185,5 +142,34 @@ public final class Translator {
         } catch (NumberFormatException e) {
             return Integer.MAX_VALUE;
         }
+    }
+
+
+    // these methods are no longer needed since implementation of Dependency Injection, here for reference:
+
+    /**
+     * Create an array of Class objects based on the types of each element in the input list
+     *
+     * @param args a list of objects representing the arguments for the instruction being created
+     * @return an array of Class objects based on the types of the input list
+     */
+    private Class<?>[] getArgTypes(ArrayList<Object> args) {
+        Class<?>[] types = new Class[args.size()];
+        for (int i = 0; i < args.size(); i++) {
+            if (args.get(i).getClass().equals(Integer.class)) types[i] = (Integer.TYPE);
+            else types[i] = args.get(i).getClass();
+        }
+        return types;
+    }
+
+    /**
+     * Form the full name of the required Instruction subclass.
+     *
+     * @param opCode the 'raw' opCode taken from the input file for a given instruction
+     * @return a String of the name of the relevant Instruction subclass
+     */
+    private String buildInstrName(String opCode) {
+        opCode = opCode.substring(0, 1).toUpperCase() + opCode.substring(1);
+        return "sml.instructions." + opCode + "Instruction";
     }
 }

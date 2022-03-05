@@ -1,6 +1,5 @@
 package sml;
 
-import sml.instructions.*;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -80,21 +79,46 @@ public final class Translator {
         }
         var opCode = scan();
 
-        /*
-        Now take the switch statement that decides which type of instruction is created and modify the code so
-        that it uses reflection to create the instances, i.e., remove the explicit calls to the subclasses and
-        the switch statement. This will allow the SML language to be extended without having to modify the
-        original code.
-         */
+        ArrayList<Object> args = lineToArgs(label);
 
-        // need to get the arguments from the line string, exploit behaviour of scanint when error occurs
-        // Downside is it prevents the application from using the Max int when that is the intention
+        // create an instance of the matching Instruction subclass
+        String instrName = buildInstrName(opCode);
+        Class<?> instrClass = null;
+        try {
+            instrClass = Class.forName(instrName);
+        } catch (ClassNotFoundException e) {
+            System.err.println("No instruction defined for: " + instrName);
+            e.printStackTrace();
+        }
+        Constructor<?> instrConstr = null;
+        try {
+            assert instrClass != null;
+            instrConstr = instrClass.getDeclaredConstructor(getArgTypes(args));
+        } catch (NoSuchMethodException e) {
+            System.err.println("Provided arguments do not match what is expected for: " + opCode +
+                    "\nPlease review the line labelled: " + label);
+        }
+        try {
+            assert instrConstr != null;
+            return (Instruction) instrConstr.newInstance(args.toArray());
+        } catch (InstantiationException | InvocationTargetException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * Create a list of the Instruction arguments extracted from the input line
+     *
+     * @param label the label for the input line
+     * @return a list of ints and/or strings
+     */
+    private ArrayList<Object> lineToArgs(String label) {
         ArrayList<Object> args = new ArrayList<>();
         args.add(label);
 
         while (!line.isEmpty()) {
             String rollback = line;
-
             int arg = scanInt();
             if (arg == Integer.MAX_VALUE) {
                 line = rollback;
@@ -104,37 +128,33 @@ public final class Translator {
                 args.add(arg);
             }
         }
-        Object[] argsArr = args.toArray();
+        return args;
+    }
 
-        // now get the parameter types in order to obtain the constructor
-        Class[] types = new Class[args.size()];
+    /**
+     * Create an array of Class objects based on the types of each element in the input list
+     *
+     * @param args a list of objects representing the arguments for the instruction being created
+     * @return an array of Class objects based on the types of the input list
+     */
+    private Class<?>[] getArgTypes(ArrayList<Object> args) {
+        Class<?>[] types = new Class[args.size()];
         for (int i = 0; i < args.size(); i++) {
             if (args.get(i).getClass().equals(Integer.class)) types[i] = (Integer.TYPE);
             else types[i] = args.get(i).getClass();
         }
+        return types;
+    }
 
-        // build the method name
+    /**
+     * Form the full name of the required Instruction subclass.
+     *
+     * @param opCode the 'raw' opCode taken from the input file for a given instruction
+     * @return a String of the name of the relevant Instruction subclass
+     */
+    private String buildInstrName(String opCode) {
         opCode = opCode.substring(0, 1).toUpperCase() + opCode.substring(1);
-        String methodName = "sml.instructions." + opCode + "Instruction";
-
-        Class<?> instrClass = null;
-        try {
-            instrClass = Class.forName(methodName);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        Constructor<?> instrConstr = null;
-        try {
-            instrConstr = instrClass.getDeclaredConstructor(types);
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
-        try {
-            return (Instruction) instrConstr.newInstance(argsArr);
-        } catch (InstantiationException | InvocationTargetException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
-        return null;
+        return "sml.instructions." + opCode + "Instruction";
     }
 
     /*

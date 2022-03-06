@@ -6,11 +6,11 @@ import org.junit.jupiter.api.Test;
 import sml.Instruction;
 import sml.Machine;
 import sml.Registers;
-import sml.Translator;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class MulInstructionTest {
   private Machine m;
-  private Translator t;
   private Instruction instr;
 
   @BeforeEach
@@ -28,7 +28,7 @@ class MulInstructionTest {
     instr = new MulInstruction("L0", 0, 0, 0);
     // makes use of the default machine state where all registers = 0
     instr.execute(m);
-    assert m.getRegisters().getRegister(0) == 0;
+    assertEquals(0, m.getRegisters().getRegister(0));
   }
 
   @Test
@@ -37,7 +37,7 @@ class MulInstructionTest {
     m.getRegisters().setRegister(1, 3);
     m.getRegisters().setRegister(2, 7);
     instr.execute(m);
-    assert m.getRegisters().getRegister(0) == 21;
+    assertEquals(21, m.getRegisters().getRegister(0));
   }
 
   @Test
@@ -47,7 +47,7 @@ class MulInstructionTest {
     m.getRegisters().setRegister(31, -5);
     m.getRegisters().setRegister(0, -8);
     instr.execute(m);
-    assert m.getRegisters().getRegister(17) == 40;
+    assertEquals(40, m.getRegisters().getRegister(17));
   }
 
   @Test
@@ -56,7 +56,7 @@ class MulInstructionTest {
     m.getRegisters().setRegister(10, -100);
     m.getRegisters().setRegister(18, 100);
     instr.execute(m);
-    assert m.getRegisters().getRegister(6) == -10000;
+    assertEquals(-10000, m.getRegisters().getRegister(6));
   }
 
   @Test
@@ -64,18 +64,18 @@ class MulInstructionTest {
     instr = new MulInstruction("Test label 123", 31, 31, 31);
     m.getRegisters().setRegister(31, -1);
     instr.execute(m);
-    assert m.getRegisters().getRegister(31) == 1;
+    assertEquals(1, m.getRegisters().getRegister(31));
   }
 
   @Test
   void testToString1() {
     instr = new MulInstruction("L0", 0, 0, 0);
-    assert instr.toString().equals("L0: mul. Store result of r0 * r0 in r0");
+    assertEquals("L0: mul. Store result of r0 * r0 in r0", instr.toString());
   }
 
   @Test
   void testToString2() {
     instr = new MulInstruction("DEF", 6, 10, 18);
-    assert instr.toString().equals("DEF: mul. Store result of r10 * r18 in r6");
+    assertEquals("DEF: mul. Store result of r10 * r18 in r6", instr.toString());
   }
 }

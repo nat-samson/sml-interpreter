@@ -6,14 +6,12 @@ import org.junit.jupiter.api.Test;
 import sml.Instruction;
 import sml.Machine;
 import sml.Registers;
-import sml.Translator;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class DivInstructionTest {
   private Machine m;
-  private Translator t;
   private Instruction instr;
 
   @BeforeEach
@@ -37,7 +35,7 @@ class DivInstructionTest {
     instr = new DivInstruction("L0", 0, 0, 0);
     m.getRegisters().setRegister(0, 1);
     instr.execute(m);
-    assert m.getRegisters().getRegister(0) == 1;
+    assertEquals(1, m.getRegisters().getRegister(0));
   }
 
   @Test
@@ -46,7 +44,7 @@ class DivInstructionTest {
     m.getRegisters().setRegister(1, 3);
     m.getRegisters().setRegister(2, 7);
     instr.execute(m);
-    assert m.getRegisters().getRegister(0) == 0;
+    assertEquals(0, m.getRegisters().getRegister(0));
   }
 
   @Test
@@ -56,7 +54,7 @@ class DivInstructionTest {
     m.getRegisters().setRegister(31, -15);
     m.getRegisters().setRegister(0, -5);
     instr.execute(m);
-    assert m.getRegisters().getRegister(17) == 3;
+    assertEquals(3, m.getRegisters().getRegister(17));
   }
 
   @Test
@@ -65,7 +63,7 @@ class DivInstructionTest {
     m.getRegisters().setRegister(10, -100);
     m.getRegisters().setRegister(18, 100);
     instr.execute(m);
-    assert m.getRegisters().getRegister(6) == -1;
+    assertEquals(-1, m.getRegisters().getRegister(6));
   }
 
   @Test
@@ -73,18 +71,18 @@ class DivInstructionTest {
     instr = new DivInstruction("Test label 123", 31, 31, 31);
     m.getRegisters().setRegister(31, -1);
     instr.execute(m);
-    assert m.getRegisters().getRegister(31) == 1;
+    assertEquals(1, m.getRegisters().getRegister(31));
   }
 
   @Test
   void testToString1() {
     instr = new DivInstruction("L0", 0, 0, 0);
-    assert instr.toString().equals("L0: div. Store result of r0 / r0 in r0");
+    assertEquals("L0: div. Store result of r0 / r0 in r0", instr.toString());
   }
 
   @Test
   void testToString2() {
     instr = new DivInstruction("DEF", 6, 10, 18);
-    assert instr.toString().equals("DEF: div. Store result of r10 / r18 in r6");
+    assertEquals("DEF: div. Store result of r10 / r18 in r6", instr.toString());
   }
 }

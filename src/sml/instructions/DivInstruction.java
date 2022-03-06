@@ -39,6 +39,9 @@ public class DivInstruction extends Instruction {
         int val1 = m.getRegisters().getRegister(op1);
         int val2 = m.getRegisters().getRegister(op2);
 
+        // alert user if divide by zero is attempted
+        if (val2 == 0) throw new ArithmeticException("Current instruction attempted to divide by zero: " + this);
+
         m.getRegisters().setRegister(opTarget, val1 / val2);
     }
 

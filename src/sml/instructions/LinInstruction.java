@@ -4,7 +4,7 @@ import sml.Instruction;
 import sml.Machine;
 
 /**
- * This class represents the Lin (line in) instruction from the language.
+ * This class represents the Lin (load) instruction from the language.
  *
  * @author nsamso01
  */

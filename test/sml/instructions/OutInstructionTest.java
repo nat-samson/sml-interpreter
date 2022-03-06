@@ -6,17 +6,14 @@ import org.junit.jupiter.api.Test;
 import sml.Instruction;
 import sml.Machine;
 import sml.Registers;
-import sml.Translator;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class OutInstructionTest {
   private Machine m;
-  private Translator t;
   private Instruction instr;
 
   private final PrintStream standardOut = System.out;
@@ -40,14 +37,6 @@ class OutInstructionTest {
     // using default state of registers where all contain 0
     instr.execute(m);
     assertEquals("r0 contains: 0\n", outputStreamCaptor.toString());
-  }
-
-  @Test
-  void execute9() {
-    instr = new DivInstruction("L0", 0, 0, 0);
-    m.getRegisters().setRegister(0, 1);
-    instr.execute(m);
-    assert m.getRegisters().getRegister(0) == 1;
   }
 
   @Test
@@ -85,12 +74,12 @@ class OutInstructionTest {
   @Test
   void testToString1() {
     instr = new OutInstruction("L0", 0);
-    assert instr.toString().equals("L0: out. Print the contents of r0 to the console");
+    assertEquals("L0: out. Print the contents of r0 to the console", instr.toString());
   }
 
   @Test
   void testToString2() {
     instr = new OutInstruction("DEF", 6);
-    assert instr.toString().equals("DEF: out. Print the contents of r6 to the console");
+    assertEquals("DEF: out. Print the contents of r6 to the console", instr.toString());
   }
 }

@@ -22,7 +22,7 @@ amongst other skills.
 
 **Name**: Nathaniel Samson
 
-**Your userid**: e.g., nsamso01 / nat-samson
+**Your userid**: Birkbeck: nsamso01 / Github: nat-samson
 
 Please do not forget to complete this part as too often we have "orphaned" repositories which can require months to sort out.
 

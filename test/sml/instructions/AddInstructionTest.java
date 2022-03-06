@@ -8,6 +8,8 @@ import sml.Machine;
 import sml.Registers;
 import sml.Translator;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 class AddInstructionTest {
   private Machine m;
   private Translator t;
@@ -28,7 +30,7 @@ class AddInstructionTest {
     instr = new AddInstruction("L0", 0, 0, 0);
     // makes use of the default machine state where all registers = 0
     instr.execute(m);
-    assert m.getRegisters().getRegister(0) == 0;
+    assertEquals(0, m.getRegisters().getRegister(0));
   }
 
   @Test
@@ -37,7 +39,7 @@ class AddInstructionTest {
     m.getRegisters().setRegister(1, 3);
     m.getRegisters().setRegister(2, 7);
     instr.execute(m);
-    assert m.getRegisters().getRegister(0) == 10;
+    assertEquals(10, m.getRegisters().getRegister(0));
   }
 
   @Test
@@ -47,7 +49,7 @@ class AddInstructionTest {
     m.getRegisters().setRegister(31, -5);
     m.getRegisters().setRegister(0, -8);
     instr.execute(m);
-    assert m.getRegisters().getRegister(17) == -13;
+    assertEquals(-13, m.getRegisters().getRegister(17));
   }
 
   @Test
@@ -56,7 +58,7 @@ class AddInstructionTest {
     m.getRegisters().setRegister(10, -100);
     m.getRegisters().setRegister(18, 100);
     instr.execute(m);
-    assert m.getRegisters().getRegister(6) == 0;
+    assertEquals(0, m.getRegisters().getRegister(6));
   }
 
   @Test
@@ -64,18 +66,18 @@ class AddInstructionTest {
     instr = new AddInstruction("Test label 123", 31, 31, 31);
     m.getRegisters().setRegister(31, -1);
     instr.execute(m);
-    assert m.getRegisters().getRegister(31) == -2;
+    assertEquals(-2, m.getRegisters().getRegister(31));
   }
 
   @Test
   void testToString1() {
     instr = new AddInstruction("L0", 0, 0, 0);
-    assert instr.toString().equals("L0: add. Store result of r0 + r0 in r0");
+    assertEquals("L0: add. Store result of r0 + r0 in r0", instr.toString());
   }
 
   @Test
   void testToString2() {
     instr = new AddInstruction("DEF", 6, 10, 18);
-    assert instr.toString().equals("DEF: add. Store result of r10 + r18 in r6");
+    assertEquals("DEF: add. Store result of r10 + r18 in r6", instr.toString());
   }
 }

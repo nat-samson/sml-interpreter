@@ -6,8 +6,6 @@ import org.junit.jupiter.api.Test;
 import sml.Instruction;
 import sml.Machine;
 import sml.Registers;
-import sml.Translator;
-
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -15,10 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class BnzInstructionTest {
   private Machine m;
-  private Translator t;
   private Instruction instr;
-  private Instruction expected;
-  private Instruction next;
   private List<Instruction> prog;
   private Registers r;
 
@@ -43,13 +38,13 @@ class BnzInstructionTest {
   @Test
   void execute1() {
     instr = new BnzInstruction("L4", 0, "LX");
-    expected = new LinInstruction("LX", 0, 3);
+    Instruction expected = new LinInstruction("LX", 0, 3);
 
     prog.add(instr);
     prog.add(3, expected);
     prog.forEach(i -> i.execute(m));
 
-    next = prog.get(m.getPc());
+    Instruction next = prog.get(m.getPc());
     assertEquals(expected, next);
   }
 

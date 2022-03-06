@@ -34,6 +34,7 @@ public class InstructionFactory {
                 e.printStackTrace();
             }
 
+            // populate the mapping of opcodes to their constructors as specified in the properties file
             for (Map.Entry<Object, Object> e : props.entrySet()) {
                 String key = (String) e.getKey();
                 Constructor<?> value = Class.forName((String) e.getValue()).getDeclaredConstructors()[0];
@@ -67,5 +68,10 @@ public class InstructionFactory {
             e.printStackTrace();
         }
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "InstructionFactory able to produce Instructions with these opcodes:\n" + instructionMap.keySet();
     }
 }

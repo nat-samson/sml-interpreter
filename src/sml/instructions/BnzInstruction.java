@@ -1,8 +1,8 @@
 package sml.instructions;
 
 import sml.Instruction;
+import sml.LabelsBridge;
 import sml.Machine;
-import java.util.List;
 
 /**
  * This class represents the Bnz (branch if not 0) instruction from the language.
@@ -34,19 +34,12 @@ public class BnzInstruction extends Instruction {
      */
     @Override
     public void execute(Machine m) {
-
-        // this approach exploits fact that labels must be unique
-        List<Instruction> prog = m.getProg();
+        LabelsBridge l = new LabelsBridge(m.getLabels());
 
         if (m.getRegisters().getRegister(register) != 0) {
-            for (int i = 0; i < prog.size(); i++) {
-                if (prog.get(i).getLabel().equals(nextLabel)) {
-                    m.setPc(i);
-                    return;
-                }
-            }
-            // if program is meant to branch, but label can't be found
-            throw new RuntimeException("Branch instruction could not complete. No such label exists: " + nextLabel);
+            int nextInstr = l.indexOf(nextLabel);
+            if (nextInstr != -1) m.setPc(nextInstr);
+            else throw new RuntimeException("BNZ Instruction failed. No such label exists: " + nextLabel);
         }
     }
 

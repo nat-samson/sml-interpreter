@@ -4,6 +4,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import sml.Instruction;
+import sml.LabelsBridge;
 import sml.Machine;
 import sml.Registers;
 import java.util.List;
@@ -28,7 +29,10 @@ class BnzInstructionTest {
     prog.add(new LinInstruction("LO", 0, 3));
     prog.add(new LinInstruction("L1", 1, 1));
     prog.add(new SubInstruction("L2", 0, 0, 1));
-    prog.add(new SubInstruction("L3", 0, 0, 1));
+    prog.add(new BnzInstruction("L3", 0, "L2"));
+
+    LabelsBridge labels = new LabelsBridge(m.getLabels());
+    prog.forEach(instr -> labels.addLabel(instr.getLabel()));
   }
 
   @AfterEach
@@ -37,35 +41,29 @@ class BnzInstructionTest {
 
   @Test
   void execute1() {
-    instr = new BnzInstruction("L4", 0, "LX");
-    Instruction expected = new LinInstruction("LX", 0, 3);
-
-    prog.add(instr);
-    prog.add(3, expected);
-    prog.forEach(i -> i.execute(m));
-
-    Instruction next = prog.get(m.getPc());
-    assertEquals(expected, next);
+    r.setRegister(0,1);
+    prog.get(3).execute(m);
+    // register 0 != 0, branch occurs
+    assertEquals(2, m.getPc());
   }
 
   @Test
   void execute2() {
-    instr = new BnzInstruction("L4", 31, "L1");
-    prog.add(instr);
-    m.execute();
-
-    // PC is increased as expected, i.e. no branch occurs
-    assertEquals(5, m.getPc());
+    int pcBefore = m.getPc();
+    r.setRegister(0,0);
+    prog.get(3).execute(m);
+    // No branch occurs (nb PC would increment by 1 if executing via the Machine, not via the Instruction)
+    assertEquals(pcBefore, m.getPc());
   }
 
   @Test
   void execute3() {
+    int pcBefore = m.getPc();
     r.setRegister(10,0);
     instr = new BnzInstruction("L4", 10, "L2");
     instr.execute(m);
-
-    // no branch occurs, register is 0
-    assertEquals(0, m.getPc());
+    // No branch occurs, register is 0
+    assertEquals(pcBefore, m.getPc());
   }
 
   @Test

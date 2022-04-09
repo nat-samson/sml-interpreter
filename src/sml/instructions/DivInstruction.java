@@ -1,5 +1,7 @@
 package sml.instructions;
 
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 import sml.Instruction;
 import sml.Machine;
 
@@ -8,6 +10,8 @@ import sml.Machine;
  *
  * @author nsamso01
  */
+@Component("div")
+@Scope("prototype")
 public class DivInstruction extends Instruction {
 
     private final int opTarget;
@@ -54,6 +58,4 @@ public class DivInstruction extends Instruction {
     public String toString() {
         return super.toString() + ". Store result of r" + op1 + " / r" + op2 + " in r" + opTarget;
     }
-
-    // TODO Implement desired functionality when Dividing By Zero
 }

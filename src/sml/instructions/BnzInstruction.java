@@ -1,5 +1,7 @@
 package sml.instructions;
 
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 import sml.Instruction;
 import sml.LabelsBridge;
 import sml.Machine;
@@ -9,6 +11,8 @@ import sml.Machine;
  *
  * @author nsamso01
  */
+@Component("bnz")
+@Scope("prototype")
 public class BnzInstruction extends Instruction {
 
     private final int register;

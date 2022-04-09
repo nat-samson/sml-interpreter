@@ -1,5 +1,7 @@
 package sml.instructions;
 
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 import sml.Instruction;
 import sml.Machine;
 
@@ -8,6 +10,8 @@ import sml.Machine;
  *
  * @author nsamso01
  */
+@Component("lin")
+@Scope("prototype")
 public class LinInstruction extends Instruction {
 
     private final int opTarget;

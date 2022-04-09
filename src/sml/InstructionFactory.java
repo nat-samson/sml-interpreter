@@ -10,7 +10,10 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * Factory class for creating Instructions for an SML program
+ * Factory class for creating Instructions for an SML program.
+ *
+ * NOTE: This class and the bean.properties files are no longer being used since the implementation of Spring, so
+ * are here just for reference.
  */
 public class InstructionFactory {
 

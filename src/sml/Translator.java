@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * This class ....
@@ -84,8 +86,8 @@ public final class Translator {
 
         ArrayList<Object> args = lineToArgs(label);
 
-        InstructionFactory factory = InstructionFactory.getInstance();
-        return factory.getInstruction(opCode, args);
+        BeanFactory factory = new ClassPathXmlApplicationContext("/beans.xml");
+        return (Instruction) factory.getBean(opCode, args.toArray());
     }
 
     /**

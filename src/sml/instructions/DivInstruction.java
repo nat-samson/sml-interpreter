@@ -58,6 +58,4 @@ public class DivInstruction extends Instruction {
     public String toString() {
         return super.toString() + ". Store result of r" + op1 + " / r" + op2 + " in r" + opTarget;
     }
-
-    // TODO Implement desired functionality when Dividing By Zero
 }

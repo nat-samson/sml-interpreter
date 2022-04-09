@@ -82,10 +82,11 @@ public final class Translator {
         if (line.equals("")) {
             return null;
         }
-        var opCode = scan();
+        String opCode = scan();
 
         ArrayList<Object> args = lineToArgs(label);
 
+        // use Spring to instantiate the instruction
         BeanFactory factory = new ClassPathXmlApplicationContext("/beans.xml");
         return (Instruction) factory.getBean(opCode, args.toArray());
     }
@@ -144,34 +145,5 @@ public final class Translator {
         } catch (NumberFormatException e) {
             return Integer.MAX_VALUE;
         }
-    }
-
-
-    // these methods are no longer needed since implementation of Dependency Injection, here for reference:
-
-    /**
-     * Create an array of Class objects based on the types of each element in the input list
-     *
-     * @param args a list of objects representing the arguments for the instruction being created
-     * @return an array of Class objects based on the types of the input list
-     */
-    private Class<?>[] getArgTypes(ArrayList<Object> args) {
-        Class<?>[] types = new Class[args.size()];
-        for (int i = 0; i < args.size(); i++) {
-            if (args.get(i).getClass().equals(Integer.class)) types[i] = (Integer.TYPE);
-            else types[i] = args.get(i).getClass();
-        }
-        return types;
-    }
-
-    /**
-     * Form the full name of the required Instruction subclass.
-     *
-     * @param opCode the 'raw' opCode taken from the input file for a given instruction
-     * @return a String of the name of the relevant Instruction subclass
-     */
-    private String buildInstrName(String opCode) {
-        opCode = opCode.substring(0, 1).toUpperCase() + opCode.substring(1);
-        return "sml.instructions." + opCode + "Instruction";
     }
 }

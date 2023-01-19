@@ -1,15 +1,10 @@
-[![Open in Visual Studio Code](https://classroom.github.com/assets/open-in-vscode-f059dc9a6f8d3a56e377f745f24479a46679e63a5d9fe6f495e02850cd0d8118.svg)](https://classroom.github.com/online_ide?assignment_repo_id=7064247&assignment_repo_type=AssignmentRepo)
 # Simple (Small) Machine Language (SML)
 
 ### A coursework examining reflection and dependency injection
 
-+ This assignment is to be completed individually.
-+ The sample code mentioned in the text can be found in this repository.
+This repo is adapted from a coursework assignment to provide practice with:
 
-<img src="/Users/keith/Documents/Courses/sdp-sp3/2021/coursework-small-machine-language/sml.jpg" alt="sml" style="zoom:67%;" />
-
-The aim of this assignment is to give you practice with 
-
++ various design patterns,
 + subclasses, 
 + modifying existing code, 
 + testing,
@@ -18,17 +13,11 @@ The aim of this assignment is to give you practice with
 
 amongst other skills.
 
-## Details
-
-**Name**: Nathaniel Samson
-
-**Your userid**: Birkbeck: nsamso01 / Github: nat-samson
-
-Please do not forget to complete this part as too often we have "orphaned" repositories which can require months to sort out.
+I have left the following description of the coursework assignment intact for reference. My approach is recorded in the commit history. For the dependency injection, I initially implemented a properties file approach, ultimately swapping this out using Spring and XML.
 
 ## The problem
 
-In this assignment you will write an interpreter for a simple machine language — `SML`. 
+The task is to write an interpreter for a simple machine language — `SML`. 
 
 The general form of a machine language instruction is:
 
@@ -90,7 +79,6 @@ Your interpreter will:
 
 This looks like a tall order, but have no fear; we provide you with some of the code, so you can concentrate on the interesting use of subclasses, dependency injection, and reflection. 
 
-Completing the worksheets really helps as preparation for this assignment.
 
 ## Design of the program
 
